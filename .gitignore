@@ -1,0 +1,17 @@
+# Environments
+.env
+venv/
+env/
+source/
+
+# Mac OS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# MS Word temp files
+~$*.docx

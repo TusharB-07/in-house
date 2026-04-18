@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Center / SmartWaste</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .tabs { display: flex; gap: 4rem; margin-bottom: 6rem; border-bottom: 1px solid var(--border-color); }
+        .tab-btn {
+            background: none; border: none; color: var(--text-secondary);
+            font-size: 0.85rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 2px; padding-bottom: 1.5rem; cursor: pointer;
+            position: relative;
+        }
+        .tab-btn.active { color: var(--accent-primary); }
+        .tab-btn.active::after {
+            content: ''; position: absolute; bottom: -1px; left: 0;
+            width: 100%; height: 2px; background: var(--accent-primary);
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 1000;
+            justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background: var(--bg-color); border: 1px solid var(--border-color);
+            width: 90%; max-width: 600px; border-radius: 2.5rem; padding: 4rem;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">Halo / SmartWaste</div>
+        <div class="nav-links">
+            <a href="dashboard.html">Network</a>
+            <a href="logs.html">Archive</a>
+            <a href="leaderboard.html">Rankings</a>
+            <a href="admin.html" class="active">Control</a>
+        </div>
+        <div id="nav-auth"></div>
+    </nav>
+
+    <div class="container">
+        <header style="margin: 6rem 0 4rem;">
+            <p style="color: var(--accent-primary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 2rem;">System Override</p>
+            <h1 style="font-size: 6rem; letter-spacing: -0.05em;">Control <br>Panel.</h1>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="students">Students</button>
+            <button class="tab-btn" data-tab="bins">Bins</button>
+            <button class="tab-btn" data-tab="sessions">Sessions</button>
+            <button class="tab-btn" data-tab="stats">Statistics</button>
+        </div>
+
+        <!-- TAB: STUDENTS -->
+        <div id="students" class="tab-content active">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4rem;">
+                <input type="text" id="student-search" placeholder="Search by ID or Name..." style="max-width: 400px;">
+                <button class="btn btn-primary" onclick="openModal('student-modal')">+ Add Student</button>
+            </div>
+            <div class="glass-card" style="padding: 0; border-radius: 2rem; overflow: hidden;">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Name</th>
+                                <th>Points</th>
+                                <th>Accuracy</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-students-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: BINS -->
+        <div id="bins" class="tab-content">
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 4rem;">
+                <button class="btn btn-primary" onclick="openModal('bin-modal')">+ Register Bin</button>
+            </div>
+            <div class="glass-card" style="padding: 0; border-radius: 2rem; overflow: hidden;">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Node ID</th>
+                                <th>Signature</th>
+                                <th>Location</th>
+                                <th>Disposals</th>
+                                <th>State</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-bins-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: SESSIONS -->
+        <div id="sessions" class="tab-content">
+            <h3 style="margin-bottom: 3rem; font-size: 1.5rem;">Live Active Links</h3>
+            <div class="glass-card" style="padding: 0; border-radius: 2rem; overflow: hidden; margin-bottom: 6rem;">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Identity</th>
+                                <th>Node</th>
+                                <th>Units</th>
+                                <th>Credits</th>
+                                <th>Duration</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-sessions-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: STATS -->
+        <div id="stats" class="tab-content">
+            <div class="grid" style="margin-bottom: 6rem;">
+                <div class="stat-item">
+                    <span id="stat-avg-items" class="stat-value">0</span>
+                    <span class="stat-label">Avg Units / Session</span>
+                </div>
+                <div class="stat-item">
+                    <span id="stat-anon-pct" class="stat-value">0%</span>
+                    <span class="stat-label">Anonymous Ratio</span>
+                </div>
+                <div class="stat-item">
+                    <span id="stat-total-disposals" class="stat-value">0</span>
+                    <span class="stat-label">Total processed</span>
+                </div>
+            </div>
+            <div style="height: 400px; display: flex; justify-content: center; align-items: center; border: 1px dashed var(--border-color); border-radius: 2rem; color: var(--text-secondary);">
+                Chart.js integration pending final UI polish
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MODAL: ADD STUDENT -->
+    <div id="student-modal" class="modal">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 3rem;">Register Student</h2>
+            <form id="add-student-form">
+                <div class="form-grid">
+                    <div>
+                        <label style="display:block; margin-bottom:0.5rem; font-size:0.75rem; color:var(--text-secondary);">STUDENT ID</label>
+                        <input type="text" id="m-student-id" required>
+                    </div>
+                    <div>
+                        <label style="display:block; margin-bottom:0.5rem; font-size:0.75rem; color:var(--text-secondary);">FULL NAME</label>
+                        <input type="text" id="m-student-name" required>
+                    </div>
+                </div>
+                <div style="margin-top: 1.5rem;">
+                    <label style="display:block; margin-bottom:0.5rem; font-size:0.75rem; color:var(--text-secondary);">EMAIL ADDRESS</label>
+                    <input type="email" id="m-student-email" required>
+                </div>
+                <div style="margin-top: 1.5rem;">
+                    <label style="display:block; margin-bottom:0.5rem; font-size:0.75rem; color:var(--text-secondary);">SECURITY KEY</label>
+                    <input type="password" id="m-student-pass" required>
+                </div>
+                <div style="margin-top: 3rem; display: flex; gap: 2rem;">
+                    <button type="submit" class="btn btn-primary" style="flex:1;">Register</button>
+                    <button type="button" class="btn btn-outline" onclick="closeModal('student-modal')" style="flex:1;">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD BIN -->
+    <div id="bin-modal" class="modal">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 3rem;">Provision Node</h2>
+            <form id="add-bin-form">
+                <div style="margin-bottom: 2rem;">
+                    <label style="display:block; margin-bottom:0.5rem; font-size:0.75rem; color:var(--text-secondary);">CAMPUS LOCATION</label>
+                    <input type="text" id="m-bin-location" placeholder="e.g. Main Library Entrance" required>
+                </div>
+                <div id="bin-result" style="display:none; padding:2rem; background:rgba(0,255,157,0.05); border:1px solid var(--accent-primary); border-radius:1rem; margin-bottom:2rem;">
+                    <p style="font-size:0.8rem; margin-bottom:0.5rem;">Node provisioned successfully!</p>
+                    <p style="font-size:1.5rem; font-weight:800; letter-spacing:4px;" id="res-bin-code">000000</p>
+                </div>
+                <div style="display: flex; gap: 2rem;">
+                    <button type="submit" id="provision-btn" class="btn btn-primary" style="flex:1;">Provision</button>
+                    <button type="button" class="btn btn-outline" onclick="closeModal('bin-modal')" style="flex:1;">Dismiss</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { api } from './js/api.js';
+
+        // Tab Switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.tab-btn, .tab-content').forEach(el => el.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+                loadTabData(btn.dataset.tab);
+            };
+        });
+
+        async function loadTabData(tab) {
+            try {
+                if (tab === 'students') {
+                    const data = await api.getAllStudents();
+                    const tbody = document.getElementById('admin-students-body');
+                    tbody.innerHTML = '';
+                    data.students.forEach(s => {
+                        const acc = s.total_disposals > 0 ? Math.round((s.correct_disposals/s.total_disposals)*100) : 0;
+                        tbody.innerHTML += `
+                            <tr>
+                                <td style="font-weight:700;">${s.student_id}</td>
+                                <td>${s.name}</td>
+                                <td style="color:var(--accent-primary); font-weight:700;">${s.points}</td>
+                                <td>${acc}%</td>
+                                <td><span class="status-indicator ${s.is_active ? 'status-online' : 'status-error'}"></span></td>
+                                <td><button class="btn btn-outline" style="padding:0.4rem 1rem; font-size:0.7rem;">Manage</button></td>
+                            </tr>
+                        `;
+                    });
+                } else if (tab === 'bins') {
+                    const bins = await api.getAllBins();
+                    const tbody = document.getElementById('admin-bins-body');
+                    tbody.innerHTML = '';
+                    bins.forEach(b => {
+                        tbody.innerHTML += `
+                            <tr>
+                                <td style="font-weight:700;">${b.bin_id}</td>
+                                <td style="letter-spacing:2px; font-weight:800; color:var(--accent-primary);">${b.bin_code}</td>
+                                <td>${b.location}</td>
+                                <td>${b.total_disposals}</td>
+                                <td><span class="status-indicator ${b.is_active ? 'status-online' : 'status-error'}"></span></td>
+                                <td><button onclick="regenCode('${b.bin_id}')" class="btn btn-outline" style="padding:0.4rem 1rem; font-size:0.7rem;">Regen Code</button></td>
+                            </tr>
+                        `;
+                    });
+                } else if (tab === 'sessions') {
+                    const data = await api.getAllSessions({ status: 'active' });
+                    const tbody = document.getElementById('admin-sessions-body');
+                    tbody.innerHTML = '';
+                    data.sessions.forEach(s => {
+                        const duration = Math.round((new Date() - new Date(s.started_at))/60000);
+                        tbody.innerHTML += `
+                            <tr>
+                                <td>${s.student_name}</td>
+                                <td>${s.bin_id}</td>
+                                <td>${s.items_thrown}</td>
+                                <td>${s.points_earned}</td>
+                                <td>${duration} min</td>
+                                <td><button onclick="forceEnd('${s.session_id}')" class="btn btn-outline" style="padding:0.4rem 1rem; font-size:0.7rem; color:var(--error); border-color:rgba(255,0,0,0.2);">Kill Link</button></td>
+                            </tr>
+                        `;
+                    });
+                } else if (tab === 'stats') {
+                    const stats = await api.getSummaryStats();
+                    document.getElementById('stat-avg-items').innerText = stats.session_stats.avg_items_per_session;
+                    document.getElementById('stat-anon-pct').innerText = `${stats.anonymous_percentage}%`;
+                    document.getElementById('stat-total-disposals').innerText = stats.disposals_today;
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        window.openModal = (id) => document.getElementById(id).style.display = 'flex';
+        window.closeModal = (id) => {
+            document.getElementById(id).style.display = 'none';
+            if (id === 'bin-modal') {
+                document.getElementById('bin-result').style.display = 'none';
+                document.getElementById('provision-btn').style.display = 'block';
+            }
+        };
+
+        document.getElementById('add-student-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const data = {
+                student_id: document.getElementById('m-student-id').value,
+                name: document.getElementById('m-student-name').value,
+                email: document.getElementById('m-student-email').value,
+                password: document.getElementById('m-student-pass').value,
+                role: 'student'
+            };
+            try {
+                await api.registerStudent(data);
+                closeModal('student-modal');
+                loadTabData('students');
+            } catch (e) { alert(e); }
+        };
+
+        document.getElementById('add-bin-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const loc = document.getElementById('m-bin-location').value;
+            try {
+                const res = await api.registerBin(loc);
+                document.getElementById('res-bin-code').innerText = res.bin_code;
+                document.getElementById('bin-result').style.display = 'block';
+                document.getElementById('provision-btn').style.display = 'none';
+                loadTabData('bins');
+            } catch (e) { alert(e); }
+        };
+
+        window.regenCode = async (id) => {
+            if (!confirm("Regenerate code for " + id + "?")) return;
+            try {
+                const res = await api.regenerateBinCode(id);
+                alert("New Code: " + res.bin_code);
+                loadTabData('bins');
+            } catch (e) { alert(e); }
+        };
+
+        window.forceEnd = async (id) => {
+            if (!confirm("Force terminate this session?")) return;
+            try {
+                await api.forceEndSession(id);
+                loadTabData('sessions');
+            } catch (e) { alert(e); }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => loadTabData('students'));
+    </script>
+    <script src="js/auth.js"></script>
+</body>
+</html>
