@@ -6,39 +6,72 @@
     <title>Register / SmartWaste</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #000; }
-        .login-container { width: 100%; max-width: 450px; padding: 2rem; }
-        .login-card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 3.5rem; border-radius: 2.5rem; }
-        input { width: 100%; padding: 1.2rem; margin-bottom: 1.5rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 1rem; color: #fff; font-size: 1rem; }
-        .error-msg { color: var(--error); font-size: 0.85rem; margin-top: 2rem; display: none; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-        .success-msg { color: var(--success); font-size: 0.85rem; margin-top: 2rem; display: none; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        body {
+            background: url('https://images.unsplash.com/photo-1544911845-1f34a3eb46b1?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .login-card {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            padding: 4rem;
+            border-radius: 3rem;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.1);
+            text-align: left;
+        }
+        .hero-text-mini {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 0.9;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            margin-bottom: 2.5rem;
+            color: #1a1a1a;
+        }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-card">
-            <h2 style="font-size: 1.5rem; margin-bottom: 2.5rem; letter-spacing: -0.02em;">Create Account.</h2>
-            <form id="signup-form">
-                <p style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-secondary); margin-bottom: 0.75rem; font-weight: 600;">Full Name</p>
-                <input type="text" id="name" placeholder="Priya Sharma" required>
-
-                <p style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-secondary); margin-bottom: 0.75rem; font-weight: 600;">Student ID</p>
-                <input type="text" id="student_id" placeholder="RA2211..." required>
-
-                <p style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-secondary); margin-bottom: 0.75rem; font-weight: 600;">University Email</p>
-                <input type="email" id="email" placeholder="priya@srmist.edu.in" required>
-                
-                <p style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-secondary); margin-bottom: 0.75rem; font-weight: 600;">Password</p>
-                <input type="password" id="password" placeholder="••••••••" required>
-                
-                <button type="submit" id="signup-btn" class="btn btn-primary" style="width: 100%; margin-top: 1rem; padding: 1.2rem;">Register</button>
-                <a href="index.html" style="display:block; text-align:center; margin-top:2rem; color:var(--text-secondary); font-size:0.85rem; text-decoration:none;">Back to Login</a>
-            </form>
-            <div id="error-msg" class="error-msg"></div>
-            <div id="success-msg" class="success-msg">Account created! Redirecting...</div>
+    <header class="main-header">
+        <div class="header-content">
+            <div class="mobile-logo">Halo / SmartWaste</div>
+            <nav class="header-actions" style="display: flex; gap: 0.75rem;">
+                <a href="index.html" class="header-btn">Login</a>
+                <a href="signup.html" class="header-btn dark">Sign up</a>
+            </nav>
         </div>
+    </header>
+
+    <div class="login-card">
+        <p style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 3px; color: var(--text-secondary); margin-bottom: 1rem;">New Registration</p>
+        <h1 class="hero-text-mini">CREATE <br>ACCOUNT.</h1>
+        
+        <form id="signup-form">
+            <p style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-secondary); margin-bottom: 0.75rem; font-weight: 700;">Full Name</p>
+            <input type="text" id="name" placeholder="Priya Sharma" required>
+
+            <p style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-secondary); margin-bottom: 0.75rem; font-weight: 700;">Student ID</p>
+            <input type="text" id="student_id" placeholder="RA2211..." required>
+
+            <p style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-secondary); margin-bottom: 0.75rem; font-weight: 700;">University Email</p>
+            <input type="email" id="email" placeholder="priya@srmist.edu.in" required>
+            
+            <p style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-secondary); margin-bottom: 0.75rem; font-weight: 700;">Password</p>
+            <input type="password" id="password" placeholder="••••••••" required>
+            
+            <button type="submit" id="signup-btn" class="btn btn-dark" style="width: 100%; margin-top: 1rem; padding: 1.2rem;">Register Account</button>
+            <a href="index.html" style="display:block; text-align:center; margin-top:2rem; color:var(--text-secondary); font-size:0.85rem; text-decoration:none; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Back to Login</a>
+        </form>
+        <div id="error-msg" style="color: var(--error); font-size: 0.75rem; margin-top: 2rem; display: none; font-weight: 800; text-transform: uppercase;"></div>
+        <div id="success-msg" style="color: var(--success); font-size: 0.75rem; margin-top: 2rem; display: none; font-weight: 800; text-transform: uppercase;">Account created! Redirecting...</div>
     </div>
 
+    <script src="js/api.js" type="module"></script>
     <script type="module">
         import { api } from './js/api.js';
 

@@ -35,7 +35,10 @@ export const api = {
             body: JSON.stringify(studentData)
         });
         const data = await res.json();
-        if (res.status === 401) { localStorage.clear(); window.location.href = 'index.html'; }
+        if (res.status === 401) { 
+             console.warn("401 Unauthorized - Redirection disabled in developer bypass mode.");
+             // localStorage.clear(); window.location.href = 'index.html'; 
+        }
         if (!res.ok) throw data.error || 'Failed to register student';
         return data;
     },
@@ -103,7 +106,10 @@ export const api = {
             body: JSON.stringify({ bin_code: binCode })
         });
         const data = await res.json();
-        if (res.status === 401) { localStorage.clear(); window.location.href = 'index.html'; }
+        if (res.status === 401) { 
+             console.warn("401 Unauthorized - Redirection disabled in developer bypass mode.");
+             // localStorage.clear(); window.location.href = 'index.html'; 
+        }
         if (!res.ok) throw data.error || 'Failed to start session';
         return data;
     },
@@ -114,7 +120,10 @@ export const api = {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
-        if (res.status === 401) { localStorage.clear(); window.location.href = 'index.html'; }
+        if (res.status === 401) { 
+             console.warn("401 Unauthorized - Redirection disabled in developer bypass mode.");
+             // localStorage.clear(); window.location.href = 'index.html'; 
+        }
         if (!res.ok) throw data.error || 'Failed to fetch active session';
         return data;
     },

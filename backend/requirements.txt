@@ -4,3 +4,4 @@ flask-cors
 python-dotenv
 flask-bcrypt
 flask-jwt-extended
+certifi

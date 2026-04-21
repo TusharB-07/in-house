@@ -3,190 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Dashboard / SmartWaste</title>
+    <title>Halo / SmartWaste Student</title>
     <link rel="stylesheet" href="css/style.css">
+    <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
-        .loader-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #000;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 0.5s ease;
+        #state-a, #state-b, #state-c { display: none; height: 100%; flex-direction: column; }
+        .bin-code-input {
+            background: rgba(255,255,255,0.8);
+            border: 2px solid #ddd;
+            font-size: 1.5rem;
+            text-align: center;
+            padding: 1rem;
+            width: 100%;
+            border-radius: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #1a1a1a;
+            font-weight: 800;
+            text-transform: uppercase;
         }
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(255,255,255,0.1);
-            border-top-color: var(--accent-primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 2rem;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* Smooth state transitions */
-        #state-a, #state-b, #state-c { display: none; }
-        
         .progress-bar-container {
             width: 100%;
-            height: 6px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 10px;
+            height: 12px;
+            background: rgba(0,0,0,0.05);
+            border-radius: 100px;
             overflow: hidden;
-            margin: 1.5rem 0;
+            margin: 2rem 0;
         }
         .progress-bar-fill {
             height: 100%;
-            background: var(--accent-primary);
+            background: #2d2d2d;
             width: 100%;
-            transition: width 1s linear, background-color 0.3s ease;
+            transition: width 1s linear;
         }
-        .badge-dry { background: var(--success); color: #000; }
-        .badge-wet { background: var(--accent-secondary); color: #fff; }
+        #qr-reader {
+            width: 100%;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            display: none;
+            border: 2px solid #2d2d2d;
+        }
     </style>
 </head>
 <body>
-    <div id="loader" class="loader-overlay">
-        <div class="spinner"></div>
-        <p style="color: var(--accent-primary); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 4px;">Connecting to server...</p>
-    </div>
-
-    <nav>
-        <div class="logo" style="display: flex; align-items: center; gap: 1rem;">
-            <div style="width: 30px; height: 30px; background: var(--accent-primary); border-radius: 8px;"></div>
-            Halo / SmartWaste
-        </div>
-        <div id="nav-auth"></div>
-    </nav>
-
-    <div class="container">
-        
-        <!-- STATE A: CONNECT TO BIN -->
-        <div id="state-a">
-            <header style="margin: 6rem 0 4rem;">
-                <p style="color: var(--accent-primary); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 2rem;">Ready to earn points?</p>
-                <h1 style="font-size: 6rem; line-height: 0.9; letter-spacing: -0.05em;">Establish <br>Network Link.</h1>
-            </header>
-
-            <p style="color: var(--text-secondary); font-size: 1.1rem; max-width: 450px; margin-bottom: 3rem;">Enter the 6-digit node signature found on the bin sticker to begin your session.</p>
-            
-            <div class="glass-card" style="max-width: 500px; padding: 4rem; border-radius: 2.5rem;">
-                <form id="bin-connect-form">
-                    <p style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-secondary); margin-bottom: 1.5rem; font-weight: 600;">Node Signature</p>
-                    <input type="text" id="bin-code-input" class="bin-code-input" placeholder="000000" maxlength="6" pattern="\d{6}" inputmode="numeric" required autocomplete="off" style="font-size: 3rem; text-align: center; letter-spacing: 0.5em; padding: 2rem; margin-bottom: 2.5rem; height: 5rem;">
-                    <button type="submit" id="connect-btn" class="btn btn-primary" style="width: 100%; padding: 1.5rem; font-size: 1.1rem;">Connect to Bin</button>
-                </form>
-                <p id="connect-error" style="color: var(--error); margin-top: 2rem; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; display: none;"></p>
-            </div>
-
-            <div style="margin-top: 10rem; margin-bottom: 6rem;">
-                <h3 style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 3px; color: var(--text-secondary); margin-bottom: 4rem;">System Status</h3>
-                <div class="grid">
-                    <div class="stat-item">
-                        <span class="stat-value" id="total-points">00</span>
-                        <span class="stat-label">Total Points</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-value" id="total-streak" style="color: var(--accent-primary);">00</span>
-                        <span class="stat-label">Current Streak</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-value" id="total-rank" style="color: var(--accent-secondary);">#--</span>
-                        <span class="stat-label">Campus Rank</span>
-                    </div>
-                </div>
-            </div>
-
-            <div style="margin-bottom: 8rem;">
-                <h3 style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 3px; color: var(--text-secondary); margin-bottom: 3rem;">Recent Activity</h3>
-                <div class="glass-card" style="padding: 0; border-radius: 2rem; overflow: hidden; border-color: rgba(255,255,255,0.05);">
-                    <div class="table-container">
-                        <table style="margin: 0; width: 100%;">
-                            <tbody id="recent-sessions-body">
-                                <!-- Recent sessions here -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+    <header class="main-header">
+        <div class="header-content">
+            <div class="mobile-logo">ECOIN</div>
+            <div class="header-actions" style="display: flex; gap: 0.75rem;">
+                <a href="profile.html" class="header-btn">
+                    <div class="avatar-circle" id="header-avatar" style="width: 20px; height: 20px; font-size: 0.5rem; border: none; background: #a3b18a; color: #1a1a1a;">?</div>
+                    Hello, <span id="header-user-name">User</span>
+                </a>
+                <button onclick="logout()" class="header-btn" style="padding: 0.7rem; aspect-ratio: 1; justify-content: center;" title="Logout">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                </button>
             </div>
         </div>
+    </header>
 
-        <!-- STATE B: LIVE SESSION -->
-        <div id="state-b">
-            <header style="margin: 6rem 0 4rem;">
-                <div class="session-banner" id="session-location-banner" style="background: var(--success); color: #000; padding: 0.5rem 1.5rem; border-radius: 100px; display: inline-block; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 2rem;">
-                    LINK_ACTIVE // BIN-003
+    <div class="app-container">
+        <!-- BOTTOM NAVIGATION -->
+        <nav class="bottom-nav">
+            <a href="student.html" class="bottom-nav-link active">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                <span>Disposal</span>
+            </a>
+            <a href="leaderboard.html" class="bottom-nav-link">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg>
+                <span>Rankings</span>
+            </a>
+            <a href="profile.html" class="bottom-nav-link">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <span>Profile</span>
+            </a>
+        </nav>
+        <!-- SIDEBAR (Desktop Only) -->
+        <aside class="sidebar">
+            <div class="sidebar-card">
+                <div class="profile-cover"></div>
+                <div class="sidebar-content" style="text-align: center; margin-top: -30px; position: relative; z-index: 10;">
+                    <div class="avatar-circle" id="sidebar-avatar" style="width: 80px; height: 80px; font-size: 2rem; margin: 0 auto 1rem; border: 4px solid #fff; background: #a3b18a; color: #1a1a1a;">?</div>
+                    <h3 id="sidebar-name" style="margin-bottom: 0.2rem; font-size: 1.4rem;">Student User</h3>
+                    <p id="sidebar-id" style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 700;">RA2211000000</p>
                 </div>
-                <h1 style="font-size: 6rem; line-height: 0.9; letter-spacing: -0.05em;" id="session-bin-name">Main <br>Canteen.</h1>
-            </header>
-            
-            <div class="dashboard-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: start;">
-                <div>
-                    <div class="stat-mini" style="margin-bottom: 4rem;">
-                        <p style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1rem;">Units Processed</p>
-                        <div class="item-counter" id="session-item-count" style="font-size: 8rem; font-weight: 700; line-height: 1;">0</div>
-                    </div>
+            </div>
 
-                    <div style="margin-bottom: 4rem;">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1rem;">
-                            <span id="session-timer-text" style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary);">Session Expiry: 30s</span>
-                            <span id="session-points-earned" style="font-size: 1.5rem; font-weight: 700; color: var(--accent-primary);">+0 PTS</span>
+            <div class="stat-pill" style="margin-bottom: 1.5rem;">
+                <span class="label">Balance</span>
+                <span class="value" id="total-points">00</span>
+            </div>
+
+            <button onclick="logout()" class="btn btn-dark" style="margin-top: auto; width: 100%;">Exit Session</button>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content" style="padding-top: 8rem;">
+            <!-- STATE A: READY -->
+            <div id="state-a">
+                <p class="sub-hero">Earn Rewards by Depositing</p>
+                <h1 class="hero-text">SYNC WITH <br>SMART BIN.</h1>
+                
+                <div style="max-width: 400px; margin-top: auto; margin-bottom: 4rem; z-index: 1;">
+                    <div id="qr-reader"></div>
+                    
+                    <form id="bin-connect-form">
+                        <p style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: #1a1a1a; margin-bottom: 1rem; font-weight: 800;">Bin MAC ID / Scan QR</p>
+                        <input type="text" id="bin-code-input" class="bin-code-input" placeholder="AA:BB:CC:DD:EE:FF" required autocomplete="off">
+                        
+                        <div style="display: flex; gap: 1rem;">
+                            <button type="button" id="scan-qr-btn" class="btn btn-outline" style="flex: 1; padding: 1.2rem; gap: 0.5rem;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                                Scan QR
+                            </button>
+                            <button type="submit" id="connect-btn" class="btn btn-dark" style="flex: 2; padding: 1.2rem;">Start Depositing</button>
                         </div>
-                        <div class="progress-bar-container">
-                            <div id="session-timer-bar" class="progress-bar-fill"></div>
+                    </form>
+                    <p id="connect-error" style="color: var(--error); margin-top: 1rem; font-weight: 800; font-size: 0.75rem; text-transform: uppercase; display: none;"></p>
+                </div>
+            </div>
+
+            <!-- STATE B -->
+            <div id="state-b">
+                <p class="sub-hero" id="session-location-banner">Link Active // Bin-000</p>
+                <h1 class="hero-text">DEPOSITING <br>WASTE.</h1>
+                
+                <div style="max-width: 500px; margin-top: auto; margin-bottom: 4rem; z-index: 1;">
+                    <div class="stat-row">
+                        <div class="stat-pill">
+                            <span class="label">Processed</span>
+                            <span class="value" id="session-item-count">00</span>
                         </div>
-                        <p style="font-size: 0.8rem; color: var(--text-secondary);">Session auto-closes after 30s of inactivity.</p>
+                        <div class="stat-pill">
+                            <span class="label">Earned</span>
+                            <span class="value" id="session-points-earned">+0</span>
+                        </div>
                     </div>
 
-                    <button onclick="endCurrentSession()" class="btn btn-outline" style="border-radius: 100px; padding: 1rem 3rem; font-weight: 700; border-color: rgba(255,255,255,0.2);">Terminate Link</button>
+                    <div class="progress-bar-container">
+                        <div id="session-timer-bar" class="progress-bar-fill"></div>
+                    </div>
+                    <p id="session-timer-text" style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 800; text-transform: uppercase; letter-spacing: 2px;">Session Expiry: 30s</p>
+                    
+                    <button onclick="endCurrentSession()" class="btn btn-dark" style="margin-top: 3rem; padding: 1.5rem 3rem;">Terminate Link</button>
                 </div>
+            </div>
 
-                <div class="glass-card" style="padding: 0; border-radius: 2rem; overflow: hidden; border-color: rgba(255,255,255,0.05);">
-                    <h3 style="padding: 2.5rem; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-secondary); border-bottom: 1px solid var(--border-color); margin: 0;">Stream Log</h3>
-                    <div class="table-container" style="max-height: 450px; overflow-y: auto;">
-                        <table style="margin: 0; width: 100%;">
-                            <tbody id="session-log-body">
-                                <!-- Live items injected here -->
-                            </tbody>
-                        </table>
+            <!-- STATE C -->
+            <div id="state-c">
+                <p class="sub-hero">Transmission Complete</p>
+                <h1 class="hero-text">REPORT <br>READY.</h1>
+                
+                <div style="max-width: 600px; margin-top: auto; margin-bottom: 4rem; z-index: 1;">
+                    <div class="stat-row">
+                        <div class="stat-pill">
+                            <span class="label">Units</span>
+                            <span class="value" id="summary-items">0</span>
+                        </div>
+                        <div class="stat-pill">
+                            <span class="label">Points</span>
+                            <span class="value" id="summary-points">0</span>
+                        </div>
+                        <div class="stat-pill">
+                            <span class="label">Accuracy</span>
+                            <span class="value" id="summary-accuracy">0%</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 3rem;">
+                        <p id="summary-streak-msg" style="font-weight: 800; font-size: 1.5rem; margin-bottom: 0.5rem;">Streak Maintained! 🔥</p>
+                        <p id="summary-total-msg" style="color: var(--text-secondary); font-weight: 700; margin-bottom: 3rem; text-transform: uppercase; letter-spacing: 1px;">New Lifetime Total: <span id="summary-total-points" style="color: #1a1a1a;">0</span></p>
+                        <button onclick="resetToA()" class="btn btn-dark" style="padding: 1.5rem 4rem;">New Session</button>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- STATE C: SUMMARY -->
-        <div id="state-c">
-            <header style="margin: 6rem 0 6rem;">
-                <p style="color: var(--accent-primary); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 4px; margin-bottom: 2rem;">Transmission Complete</p>
-                <h1 style="font-size: 6rem; line-height: 0.9; letter-spacing: -0.05em;">Session <br>Report.</h1>
-            </header>
-
-            <div class="grid" style="margin-bottom: 6rem;">
-                <div class="stat-item">
-                    <span id="summary-items" class="stat-value">0</span>
-                    <span class="stat-label">Units Logged</span>
-                </div>
-                <div class="stat-item">
-                    <span id="summary-points" class="stat-value" style="color: var(--accent-primary);">0</span>
-                    <span class="stat-label">Points Earned</span>
-                </div>
-                <div class="stat-item">
-                    <span id="summary-accuracy" class="stat-value" style="color: var(--accent-secondary);">0%</span>
-                    <span class="stat-label">Accuracy Score</span>
-                </div>
-            </div>
-
-            <div class="glass-card" style="padding: 4rem; border-radius: 2.5rem; text-align: center; margin-bottom: 8rem; border-color: var(--accent-primary);">
-                <div id="summary-streak-msg" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem;">Streak Maintained! 🔥</div>
-                <div id="summary-total-msg" style="color: var(--text-secondary); margin-bottom: 3rem;">New Lifetime Total: <span id="summary-total-points" style="color: #fff; font-weight: 700;">0</span> Points</div>
-                <button onclick="resetToA()" class="btn btn-primary" style="padding: 1.5rem 4rem;">Establish New Link</button>
-            </div>
-        </div>
-
+            <img src="https://png.pngtree.com/png-vector/20231017/ourmid/pngtree-trash-can-clipart-green-recycling-bin-side-view-vector-png-image_10203597.png" alt="Recycle Bin" class="bg-object">
+        </main>
     </div>
 
     <script type="module">
@@ -194,6 +186,7 @@
 
         let sessionPollInterval = null;
         let currentSessionId = null;
+        let html5QrCode = null;
 
         async function initDashboard() {
             const studentId = localStorage.getItem('student_id');
@@ -202,15 +195,15 @@
                 return;
             }
             
-            // Initial data fetch
-            await loadProfileStats(studentId);
+            const name = localStorage.getItem('name') || 'Student User';
+            const initials = name.split(' ').map(n => n[0]).join('');
+            document.getElementById('sidebar-name').innerText = name;
+            document.getElementById('sidebar-id').innerText = studentId;
+            document.getElementById('sidebar-avatar').innerText = initials;
+            document.getElementById('header-avatar').innerText = initials;
+            document.getElementById('header-user-name').innerText = name.split(' ')[0];
 
-            // Hide loader
-            const loader = document.getElementById('loader');
-            if (loader) {
-                loader.style.opacity = '0';
-                setTimeout(() => loader.style.display = 'none', 500);
-            }
+            await loadProfileStats(studentId);
 
             try {
                 const session = await api.getActiveSession(studentId);
@@ -227,33 +220,13 @@
                 const data = await api.getStudentProfile(studentId);
                 if (data.student) {
                     document.getElementById('total-points').innerText = data.student.points.toString().padStart(2, '0');
-                    document.getElementById('total-streak').innerText = (data.student.streak_days || 0).toString().padStart(2, '0');
-                    document.getElementById('total-rank').innerText = `#${data.rank.toString().padStart(2, '0')}`;
-                    
-                    // Render recent sessions (last 5)
-                    const recentBody = document.getElementById('recent-sessions-body');
-                    recentBody.innerHTML = '';
-                    if (data.session_history && data.session_history.length > 0) {
-                        data.session_history.forEach(s => {
-                            const date = new Date(s.started_at).toLocaleDateString([], { month: 'short', day: 'numeric' });
-                            recentBody.innerHTML += `
-                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
-                                    <td style="padding: 1.5rem 2.5rem; font-size: 0.85rem; color: var(--text-secondary);">${date}</td>
-                                    <td style="padding: 1.5rem 2.5rem; font-weight: 600;">${s.bin_id}</td>
-                                    <td style="padding: 1.5rem 2.5rem;">${s.items_thrown} units</td>
-                                    <td style="padding: 1.5rem 2.5rem; text-align: right; color: var(--accent-primary); font-weight: 700;">+${s.points_earned}</td>
-                                </tr>
-                            `;
-                        });
-                    } else {
-                        recentBody.innerHTML = '<tr><td style="padding: 3rem; text-align: center; color: var(--text-secondary);">No recent activity detected.</td></tr>';
-                    }
+                    // Daily streak and rank only on sidebar for desktop, or profile page
                 }
             } catch (e) { console.error(e); }
         }
 
         function showStateA() {
-            document.getElementById('state-a').style.display = 'block';
+            document.getElementById('state-a').style.display = 'flex';
             document.getElementById('state-b').style.display = 'none';
             document.getElementById('state-c').style.display = 'none';
             if (sessionPollInterval) clearInterval(sessionPollInterval);
@@ -262,12 +235,11 @@
 
         function showStateB(session) {
             document.getElementById('state-a').style.display = 'none';
-            document.getElementById('state-b').style.display = 'block';
+            document.getElementById('state-b').style.display = 'flex';
             document.getElementById('state-c').style.display = 'none';
             
             currentSessionId = session.session_id;
-            document.getElementById('session-location-banner').innerText = `LINK_ACTIVE // ${session.bin_id}`;
-            document.getElementById('session-bin-name').innerText = session.location.replace(' ', '\n');
+            document.getElementById('session-location-banner').innerText = `Link Active // ${session.bin_id}`;
             updateSessionUI(session);
 
             if (!sessionPollInterval) {
@@ -279,7 +251,7 @@
         async function showStateC(summary) {
             document.getElementById('state-a').style.display = 'none';
             document.getElementById('state-b').style.display = 'none';
-            document.getElementById('state-c').style.display = 'block';
+            document.getElementById('state-c').style.display = 'flex';
             
             document.getElementById('summary-items').innerText = summary.items_thrown;
             document.getElementById('summary-points').innerText = summary.points_earned;
@@ -317,7 +289,7 @@
 
         async function updateSessionUI(session) {
             document.getElementById('session-item-count').innerText = session.items_thrown.toString().padStart(2, '0');
-            document.getElementById('session-points-earned').innerText = `+${session.points_earned} PTS`;
+            document.getElementById('session-points-earned').innerText = `+${session.points_earned}`;
             
             const secondsLeft = Math.max(0, 30 - (session.seconds_inactive || 0));
             document.getElementById('session-timer-text').innerText = `Session Expiry: ${secondsLeft}s`;
@@ -325,50 +297,59 @@
             const bar = document.getElementById('session-timer-bar');
             const pct = (secondsLeft / 30) * 100;
             bar.style.width = `${pct}%`;
-            if (secondsLeft <= 10) bar.style.backgroundColor = 'var(--error)';
-            else bar.style.backgroundColor = 'var(--accent-primary)';
-
-            // Fetch recent disposals for this session for the log
-            try {
-                const dispRes = await api.getDisposals({ session_id: session.session_id, limit: 10 });
-                const logBody = document.getElementById('session-log-body');
-                logBody.innerHTML = '';
-                if (dispRes.disposals && dispRes.disposals.length > 0) {
-                    dispRes.disposals.forEach(d => {
-                        const time = new Date(d.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-                        logBody.innerHTML += `
-                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.02);">
-                                <td style="padding: 1.5rem 2.5rem; font-size: 0.75rem; color: var(--text-secondary);">${time}</td>
-                                <td style="padding: 1.5rem 2.5rem;"><span class="badge badge-${d.waste_type}">${d.waste_type}</span></td>
-                                <td style="padding: 1.5rem 2.5rem; text-align: right; color: ${d.is_correct ? 'var(--success)' : 'var(--error)'}; font-weight: 700;">${d.is_correct ? '+'+d.points_awarded : '0'}</td>
-                            </tr>
-                        `;
-                    });
-                } else {
-                    logBody.innerHTML = '<tr><td style="padding: 3rem; text-align: center; color: var(--text-secondary); font-size: 0.8rem;">Waiting for disposals...</td></tr>';
-                }
-            } catch (e) {}
         }
 
         document.getElementById('bin-connect-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const code = document.getElementById('bin-code-input').value;
+            connectToBin(code);
+        });
+
+        async function connectToBin(code) {
             const btn = document.getElementById('connect-btn');
             const errorEl = document.getElementById('connect-error');
             
             btn.disabled = true;
-            btn.innerText = 'Establishing Link...';
+            btn.innerText = 'Syncing...';
             errorEl.style.display = 'none';
 
             try {
                 const res = await api.startSession(code);
+                if (html5QrCode) {
+                    await html5QrCode.stop();
+                    document.getElementById('qr-reader').style.display = 'none';
+                }
                 showStateB(res);
             } catch (err) {
                 errorEl.innerText = `ERR: ${err}`;
                 errorEl.style.display = 'block';
             } finally {
                 btn.disabled = false;
-                btn.innerText = 'Connect to Bin';
+                btn.innerText = 'Start Depositing';
+            }
+        }
+
+        // QR Scanning Logic
+        document.getElementById('scan-qr-btn').addEventListener('click', async () => {
+            if (!requireLogin()) return;
+            const qrReaderEl = document.getElementById('qr-reader');
+            qrReaderEl.style.display = 'block';
+            
+            if (!html5QrCode) {
+                html5QrCode = new Html5Qrcode("qr-reader");
+            }
+
+            const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+                document.getElementById('bin-code-input').value = decodedText;
+                connectToBin(decodedText);
+            };
+            const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+            try {
+                await html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
+            } catch (err) {
+                alert("Camera access failed: " + err);
+                qrReaderEl.style.display = 'none';
             }
         });
 
@@ -383,6 +364,10 @@
 
         document.addEventListener('DOMContentLoaded', initDashboard);
     </script>
+    <script src="js/mock-login.js"></script>
     <script src="js/auth.js"></script>
+</body>
+</html>
+t>
 </body>
 </html>

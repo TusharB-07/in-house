@@ -10,15 +10,17 @@ load_dotenv()
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017/smart-waste")
 
 try:
-    # Added serverSelectionTimeoutMS so it doesn't hang for 30s
-    client = MongoClient(
-        MONGO_URI, 
-        tlsCAFile=certifi.where(),
-        serverSelectionTimeoutMS=5000
-    )
+    # Only use certifi for Atlas (mongodb+srv://)
+    client_kwargs = {
+        "serverSelectionTimeoutMS": 5000
+    }
+    if MONGO_URI.startswith("mongodb+srv://"):
+        client_kwargs["tlsCAFile"] = certifi.where()
+        
+    client = MongoClient(MONGO_URI, **client_kwargs)
     # Trigger a quick connection test
     client.admin.command('ping')
-    print("✅ MongoDB Atlas Connected Successfully")
+    print(f"✅ MongoDB Connected: {MONGO_URI}")
 except ServerSelectionTimeoutError as e:
     print("\n❌ DATABASE CONNECTION ERROR:")
     print("1. Check if your IP is whitelisted in MongoDB Atlas (Network Access).")

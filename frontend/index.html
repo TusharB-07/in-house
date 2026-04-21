@@ -3,80 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Halo / SmartWaste Studio</title>
+    <title>ECOIN / Account Access</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
         body {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: #000;
-        }
-        .login-container {
-            width: 100%;
-            max-width: 400px;
+            min-height: 100dvh;
             padding: 2rem;
         }
         .login-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            padding: 3.5rem;
-            border-radius: 2.5rem;
-            text-align: left;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            padding: 3rem;
+            border-radius: 3rem;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 10;
+        }
+        .hero-text-mini {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 0.9;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            margin-bottom: 2.5rem;
+            color: #1a1a1a;
         }
         input {
             width: 100%;
-            padding: 1.2rem;
-            margin-bottom: 1.5rem;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border-color);
-            border-radius: 1rem;
-            color: #fff;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 1rem;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid #ddd;
+            border-radius: 1.2rem;
             font-size: 1rem;
+            outline: none;
+            font-weight: 600;
         }
         input:focus {
-            outline: none;
-            border-color: var(--accent-primary);
-        }
-        .error-msg {
-            color: var(--error);
-            font-size: 0.85rem;
-            margin-top: 2rem;
-            display: none;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            border-color: #588157;
+            background: #fff;
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <div style="text-align: center; margin-bottom: 4rem;">
-            <div style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 4px; color: var(--accent-primary); margin-bottom: 1rem;">SRM University</div>
-            <div style="font-size: 2rem; font-weight: 700; letter-spacing: -0.05em;">SmartWaste.</div>
+    <header class="main-header">
+        <div class="header-content">
+            <div class="mobile-logo">ECOIN</div>
+            <nav class="header-actions">
+                <a href="index.html" class="header-btn dark">Login</a>
+                <a href="signup.html" class="header-btn">Sign up</a>
+            </nav>
         </div>
+    </header>
 
-        <div class="login-card">
-            <h2 style="font-size: 1.5rem; margin-bottom: 2.5rem; letter-spacing: -0.02em;">Account Access.</h2>
-            <form id="login-form">
-                <p style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-secondary); margin-bottom: 0.75rem; font-weight: 600;">Student ID</p>
-                <input type="text" id="student_id" placeholder="RA2211..." required>
-                
-                <p style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-secondary); margin-bottom: 0.75rem; font-weight: 600;">Security Signature</p>
-                <input type="password" id="password" placeholder="••••••••" required>
-                
-                <button type="submit" id="login-btn" class="btn btn-primary" style="width: 100%; margin-top: 1rem; padding: 1.2rem;">Verify Identity</button>
-                <a href="signup.html" class="btn btn-outline" style="width: 100%; margin-top: 1rem; padding: 1.2rem; text-decoration: none; display: block; text-align: center; border-radius: 100px;">Create Account</a>
-            </form>
-            <div id="error-msg" class="error-msg">Invalid Credentials</div>
-        </div>
-
-        <div style="text-align: center; margin-top: 4rem; color: var(--text-secondary); font-size: 0.8rem;">
-            Forgot your signature? <br>Contact system administrator.
-        </div>
+    <div class="login-card">
+        <p style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 3px; color: var(--text-secondary); margin-bottom: 1rem;">Secure Access</p>
+        <h1 class="hero-text-mini">ACCOUNT <br>PORTAL.</h1>
+        
+        <form id="login-form">
+            <p style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: #1a1a1a; margin-bottom: 0.75rem; font-weight: 800;">Student Identifier</p>
+            <input type="text" id="student_id" placeholder="RA2211..." required>
+            
+            <p style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: #1a1a1a; margin-bottom: 0.75rem; font-weight: 800;">Security Key</p>
+            <input type="password" id="password" placeholder="••••••••" required>
+            
+            <button type="submit" id="login-btn" class="btn btn-dark" style="width: 100%; margin-top: 1rem; padding: 1.2rem;">Verify Identity</button>
+            <a href="signup.html" style="display:block; text-align:center; margin-top:1.5rem; color:var(--text-secondary); font-size:0.75rem; text-decoration:none; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">Initialize New Account</a>
+        </form>
+        <div id="error-msg" style="color: var(--error); font-size: 0.75rem; margin-top: 2rem; display: none; font-weight: 800; text-transform: uppercase; text-align: center;">Invalid Credentials</div>
     </div>
 
+    <script src="js/api.js" type="module"></script>
+    <script src="js/mock-login.js"></script>
+    <script src="js/auth.js"></script>
     <script type="module">
         import { api } from './js/api.js';
 
@@ -90,7 +98,7 @@
             const password = document.getElementById('password').value;
 
             loginBtn.disabled = true;
-            loginBtn.innerText = 'Syncing...';
+            loginBtn.innerText = 'Verifying...';
             errorMsg.style.display = 'none';
 
             try {
@@ -100,11 +108,7 @@
                 localStorage.setItem('name', data.name);
                 localStorage.setItem('student_id', studentId);
 
-                if (data.role === 'admin' || data.role === 'staff') {
-                    window.location.href = 'dashboard.html';
-                } else {
-                    window.location.href = 'student.html';
-                }
+                window.location.href = 'student.html';
             } catch (err) {
                 errorMsg.innerText = err;
                 errorMsg.style.display = 'block';
@@ -112,13 +116,6 @@
                 loginBtn.innerText = 'Verify Identity';
             }
         });
-
-        // Check if already logged in
-        if (localStorage.getItem('token')) {
-            const role = localStorage.getItem('role');
-            if (role === 'admin' || role === 'staff') window.location.href = 'dashboard.html';
-            else window.location.href = 'student.html';
-        }
     </script>
 </body>
 </html>

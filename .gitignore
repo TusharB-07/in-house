@@ -1,8 +1,21 @@
 # Environments
 .env
+backend/.env
 venv/
+backend/venv/
 env/
 source/
+
+# Project Documents
+*.docx
+*.pdf
+SmartWaste_WebModule_PRD_Final.docx
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
 
 # Mac OS
 .DS_Store
@@ -12,6 +25,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 *.so
+.pytest_cache/
+.coverage
+htmlcov/
 
 # MS Word temp files
 ~$*.docx

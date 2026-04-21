@@ -3,186 +3,184 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Profile | Smart Waste</title>
+    <title>Halo / SmartWaste Profile</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        .profile-header {
+        .profile-info-section {
+            margin-top: 2rem;
             display: flex;
-            align-items: center;
+            flex-direction: column;
             gap: 2rem;
-            margin-bottom: 3rem;
         }
-        .avatar {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, var(--accent-mid), var(--accent-deep));
-            border-radius: 50%;
+        .activity-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(20px);
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--highlight);
-            border: 2px solid var(--border-color);
+            border: 1px solid var(--border-color);
         }
-        .stats-summary {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
+        .activity-details h4 {
+            font-size: 0.9rem;
+            margin-bottom: 0.2rem;
         }
-        .qr-section {
-            text-align: center;
-            padding: 2rem;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 1.5rem;
-            border: 1px dashed var(--border-color);
+        .activity-details p {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-weight: 600;
         }
-        .qr-placeholder {
-            width: 150px;
-            height: 150px;
-            background: white;
-            margin: 0 auto 1rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: black;
-            font-weight: 700;
-            border-radius: 0.5rem;
+        .activity-points {
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: #1a1a1a;
         }
     </style>
 </head>
 <body>
-    <nav>
-        <div class="logo">SMART WASTE</div>
-        <div class="nav-links">
-            <a href="index.html">Home</a>
-            <a href="profile.html" class="active">Profile</a>
-            <a href="leaderboard.html">Leaderboard</a>
-        </div>
-        <div id="nav-auth"></div>
-    </nav>
-
-    <div class="container">
-        <div class="profile-header">
-            <div class="avatar" id="user-avatar">?</div>
-            <div>
-                <h1 id="user-name" style="margin-bottom: 0.5rem;">Loading...</h1>
-                <p id="user-id" style="color: var(--text-secondary);"></p>
+    <header class="main-header">
+        <div class="header-content">
+            <div class="mobile-logo">ECOIN</div>
+            <div class="header-actions" style="display: flex; gap: 0.75rem;">
+                <a href="profile.html" class="header-btn">
+                    <div class="avatar-circle" id="header-avatar" style="width: 20px; height: 20px; font-size: 0.5rem; border: none; background: #a3b18a; color: #1a1a1a;">?</div>
+                    Hello, <span id="header-user-name">User</span>
+                </a>
+                <button onclick="logout()" class="header-btn" style="padding: 0.7rem; aspect-ratio: 1; justify-content: center;" title="Logout">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                </button>
             </div>
         </div>
+    </header>
 
-        <div class="stats-summary">
-            <div class="glass-card" style="padding: 1.5rem; text-align: center;">
-                <p style="font-size: 0.8rem; color: var(--text-secondary);">Total Points</p>
-                <h2 id="stat-points" style="font-size: 2.5rem; margin: 0.5rem 0;">0</h2>
-                <p id="stat-rank" style="font-size: 0.8rem; color: var(--highlight);">Rank #--</p>
-            </div>
-            <div class="glass-card" style="padding: 1.5rem; text-align: center;">
-                <p style="font-size: 0.8rem; color: var(--text-secondary);">Current Streak</p>
-                <h2 id="stat-streak" style="font-size: 2.5rem; margin: 0.5rem 0;">0</h2>
-                <p style="font-size: 0.8rem; color: var(--highlight);">Days 🔥</p>
-            </div>
-            <div class="glass-card" style="padding: 1.5rem; text-align: center;">
-                <p style="font-size: 0.8rem; color: var(--text-secondary);">Accuracy</p>
-                <h2 id="stat-accuracy" style="font-size: 2.5rem; margin: 0.5rem 0;">0%</h2>
-                <p id="stat-total" style="font-size: 0.8rem; color: var(--text-secondary);">0 total disposals</p>
-            </div>
-        </div>
+    <div class="app-container">
+        <!-- BOTTOM NAVIGATION (Mobile Only) -->
+        <nav class="bottom-nav">
+            <a href="student.html" class="bottom-nav-link">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                <span>Disposal</span>
+            </a>
+            <a href="leaderboard.html" class="bottom-nav-link">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg>
+                <span>Rankings</span>
+            </a>
+            <a href="profile.html" class="bottom-nav-link active">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <span>Profile</span>
+            </a>
+        </nav>
 
-        <div class="grid" style="grid-template-columns: 2fr 1fr;">
-            <div>
-                <h3>Recent Activity</h3>
-                <div class="glass-card" style="padding: 1.5rem;">
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Bin</th>
-                                    <th>Type</th>
-                                    <th>Points</th>
-                                </tr>
-                            </thead>
-                            <tbody id="activity-body">
-                                <tr><td colspan="4" style="text-align: center;">Loading history...</td></tr>
-                            </tbody>
-                        </table>
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-card">
+                <div class="profile-cover"></div>
+                <div class="sidebar-content" style="text-align: center; margin-top: -30px; position: relative; z-index: 10;">
+                    <div class="avatar-circle" id="sidebar-avatar" style="width: 80px; height: 80px; font-size: 2rem; margin: 0 auto 1rem; border: 4px solid #fff; background: #a3b18a;">?</div>
+                    <h3 id="sidebar-name" style="margin-bottom: 0.2rem; font-size: 1.4rem;">Student User</h3>
+                    <p id="sidebar-id" style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 700;">RA2211000000</p>
+                </div>
+            </div>
+
+            <button onclick="logout()" class="btn btn-dark" style="margin-top: auto; width: 100%;">Exit Session</button>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content" style="padding-top: 8rem;">
+            <p class="sub-hero">Your Performance Registry</p>
+            <h1 class="hero-text">MY <br>PROFILE.</h1>
+
+            <div class="profile-info-section">
+                <!-- Credits & Streak -->
+                <div class="stat-row">
+                    <div class="stat-pill">
+                        <span class="label">Balance</span>
+                        <span class="value" id="total-points">00</span>
+                    </div>
+                    <div class="stat-pill">
+                        <span class="label">Daily Streak</span>
+                        <span class="value" id="total-streak">00</span>
+                    </div>
+                    <div class="stat-pill">
+                        <span class="label">Campus Rank</span>
+                        <span class="value" id="total-rank">#--</span>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div style="margin-top: 2rem;">
+                    <p style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-secondary); margin-bottom: 1.5rem; font-weight: 800;">Recent Transmissions</p>
+                    <div id="activity-list">
+                        <!-- Activity items injected here -->
+                        <p style="text-align: center; padding: 2rem; color: var(--text-secondary); font-weight: 700;">Loading Archive...</p>
                     </div>
                 </div>
             </div>
-            <div>
-                <h3>My QR ID</h3>
-                <div class="glass-card" style="padding: 1.5rem;">
-                    <div class="qr-section">
-                        <div class="qr-placeholder" id="qr-code">QR</div>
-                        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem;">Show this at the bin to earn points</p>
-                        <button class="btn btn-primary" style="width: 100%; font-size: 0.8rem;">Download PNG</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+            
+            <img src="https://png.pngtree.com/png-vector/20231017/ourmid/pngtree-trash-can-clipart-green-recycling-bin-side-view-vector-png-image_10203597.png" alt="Recycle Bin" class="bg-object">
+        </main>
     </div>
 
-    <script src="js/api.js"></script>
-    <script src="js/auth.js"></script>
-    <script>
-        async function loadProfile() {
-            const userStr = localStorage.getItem('sw_user');
-            if (!userStr) {
+    <script type="module">
+        import { api } from './js/api.js';
+
+        async function initProfile() {
+            const studentId = localStorage.getItem('student_id');
+            const name = localStorage.getItem('name');
+            
+            if (!studentId) {
                 window.location.href = 'index.html';
                 return;
             }
-            const user = JSON.parse(userStr);
-            
+
+            // Set basic info
+            document.getElementById('sidebar-name').innerText = name;
+            document.getElementById('sidebar-id').innerText = studentId;
+            const initials = name.split(' ').map(n => n[0]).join('');
+            document.getElementById('sidebar-avatar').innerText = initials;
+            document.getElementById('header-avatar').innerText = initials;
+            document.getElementById('header-user-name').innerText = name.split(' ')[0];
+
             try {
-                const data = await api.getStudentProfile(user.student_id);
-                if (data.error) throw new Error(data.error);
-
+                const data = await api.getStudentProfile(studentId);
                 const s = data.student;
-                document.getElementById('user-name').innerText = s.name;
-                document.getElementById('user-id').innerText = s.student_id;
-                document.getElementById('user-avatar').innerText = s.name.charAt(0);
                 
-                document.getElementById('stat-points').innerText = s.points;
-                document.getElementById('stat-rank').innerText = `Rank #${data.rank}`;
-                document.getElementById('stat-streak').innerText = s.streak_days || 0;
-                
-                const accuracy = s.total_disposals > 0 
-                    ? Math.round((s.correct_disposals / s.total_disposals) * 100) 
-                    : 0;
-                document.getElementById('stat-accuracy').innerText = `${accuracy}%`;
-                document.getElementById('stat-total').innerText = `${s.total_disposals} total disposals`;
-                
-                // Update QR (just text placeholder for now)
-                document.getElementById('qr-code').innerText = s.qr_code || 'N/A';
+                // Set stats
+                document.getElementById('total-points').innerText = s.points.toString().padStart(2, '0');
+                document.getElementById('total-streak').innerText = (s.streak_days || 0).toString().padStart(2, '0');
+                document.getElementById('total-rank').innerText = `#${data.rank.toString().padStart(2, '0')}`;
 
-                // Update History
-                const tbody = document.getElementById('activity-body');
-                tbody.innerHTML = '';
+                // Set activity
+                const activityList = document.getElementById('activity-list');
+                activityList.innerHTML = '';
+
                 if (data.disposals.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No activity yet.</td></tr>';
+                    activityList.innerHTML = '<p style="text-align: center; padding: 2rem; color: var(--text-secondary); font-weight: 700;">No transmissions recorded yet.</p>';
                 } else {
-                    data.disposals.forEach(d => {
-                        const date = new Date(d.timestamp).toLocaleDateString();
-                        const row = `
-                            <tr>
-                                <td>${date}</td>
-                                <td>${d.bin_id}</td>
-                                <td><span class="badge ${d.is_correct ? 'badge-success' : 'badge-error'}">${d.type}</span></td>
-                                <td style="font-weight: 700; color: var(--highlight);">+${d.points_awarded}</td>
-                            </tr>
+                    data.disposals.slice(0, 5).forEach(d => {
+                        const date = new Date(d.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                        activityList.innerHTML += `
+                            <div class="activity-card">
+                                <div class="activity-details">
+                                    <h4>${d.bin_id} - ${d.type}</h4>
+                                    <p>${date}</p>
+                                </div>
+                                <div class="activity-points">+${d.points_awarded}</div>
+                            </div>
                         `;
-                        tbody.innerHTML += row;
                     });
                 }
 
-            } catch (err) {
-                console.error(err);
-                alert("Failed to load profile data.");
+            } catch (e) {
+                console.error(e);
+                alert("Failed to sync profile data.");
             }
         }
-        document.addEventListener('DOMContentLoaded', loadProfile);
+
+        document.addEventListener('DOMContentLoaded', initProfile);
     </script>
+    <script src="js/mock-login.js"></script>
+    <script src="js/auth.js"></script>
 </body>
 </html>
